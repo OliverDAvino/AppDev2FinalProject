@@ -1,0 +1,1 @@
+Hello, This is our repository for our game Garden Clicker!
