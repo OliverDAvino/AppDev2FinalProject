@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "894777768802",
+    "project_id": "gardenclickerdb",
+    "storage_bucket": "gardenclickerdb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:894777768802:android:67fdae909bcdb2d9b18a3b",
+        "android_client_info": {
+          "package_name": "com.example.claudetests"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3gVAI1jmgXTj9RRLFxsppcz7N2eD1EQU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
