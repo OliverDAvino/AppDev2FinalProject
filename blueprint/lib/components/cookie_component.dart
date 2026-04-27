@@ -15,7 +15,7 @@ class CookieComponent extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    sprite = await gameRef.loadSprite('cookie.png');
+    sprite = await gameRef.loadSprite('MainFlower.png');
   }
 
   @override

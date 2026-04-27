@@ -19,23 +19,24 @@ class HudOverlay extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: ValueListenableBuilder<int>(
           valueListenable: game.cookieNotifier,
-          builder: (_, cookies, __) {
-            final cps = game.upgradeManager.cookiesPerSecond;
+          builder: (_, flowers, __) {
+            final fps = game.upgradeManager.cookiesPerSecond;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '🍪 ${_format(cookies)}',
+                  '🌸 ${_format(flowers)}',
                   style: const TextStyle(
-                    color: Colors.amber,
+                    color: Colors.lightGreenAccent,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     shadows: [Shadow(blurRadius: 4, color: Colors.black)],
                   ),
                 ),
-                if (cps > 0)
+                if (fps > 0)
                   Text(
-                    'per second: ${cps.toStringAsFixed(1)}',
+                    'per second: ${fps.toStringAsFixed(1)}',
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 13,

@@ -1,42 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:splashscreen/splashscreen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'main_menu_screen.dart';
-void main() {
 
-  runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: SplashApp(),
+  ));
 }
 
-class MyApp extends StatefulWidget {
-  //animation = stateful
-  const MyApp({super.key});
+class SplashApp extends StatefulWidget {
+  const SplashApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<SplashApp> createState() => _SplashAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _SplashAppState extends State<SplashApp> {
   @override
-  Widget build(BuildContext context) {
-    return SplashScreen(
-      seconds: 6,
-      navigateAfterSeconds: MainMenuScreen(),
-      title: Text(
-        'Welcome to our game!',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-      ),
-      backgroundColor: Colors.green,
-      styleTextUnderTheLoader: TextStyle(),
-      image: Image.asset( //change here:
-          'assets/images/temp.png'),
-      photoSize: 100.0,
-      loaderColor: Colors.white,
-      loadingText: Text('Welcome'),
-      loadingTextPadding: EdgeInsets.zero,
-      useLoader: true,
-    );
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 6), () {
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const MainMenuScreen()),
+        );
+      }
+    });
   }
 
-
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.green.shade900,
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/images/temp.png', width: 100, height: 100),
+            const SizedBox(height: 20),
+            const Text(
+              'Welcome to Garden Clicker!',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.lightGreenAccent,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(color: Colors.lightGreenAccent),
+            const SizedBox(height: 10),
+            const Text('Growing your garden...', style: TextStyle(color: Colors.white70)),
+          ],
+        ),
+      ),
+    );
+  }
 }

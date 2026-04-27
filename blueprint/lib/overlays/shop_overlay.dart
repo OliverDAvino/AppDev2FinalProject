@@ -19,29 +19,29 @@ class _ShopOverlayState extends State<ShopOverlay> {
         width: 220,
         height: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.brown.shade900.withOpacity(0.92),
+          color: Colors.green.shade900.withOpacity(0.92),
           border: Border(
-            left: BorderSide(color: Colors.brown.shade700, width: 2),
+            left: BorderSide(color: Colors.green.shade700, width: 2),
           ),
         ),
         child: ValueListenableBuilder<int>(
           valueListenable: widget.game.cookieNotifier,
-          builder: (_, cookies, __) {
+          builder: (_, flowers, __) {
             final upgrades = widget.game.upgradeManager.all;
             final visible = upgrades
                 .where((u) =>
-            cookies >= u.cookiesRequiredToUnlock || u.level > 0)
+                    flowers >= u.cookiesRequiredToUnlock || u.level > 0)
                 .toList();
 
             return Column(
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  color: Colors.brown.shade800,
+                  color: Colors.green.shade800,
                   child: const Center(
                     child: Text('UPGRADES',
                         style: TextStyle(
-                            color: Colors.amber,
+                            color: Colors.lightGreenAccent,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 2)),
                   ),
@@ -53,7 +53,7 @@ class _ShopOverlayState extends State<ShopOverlay> {
                     separatorBuilder: (_, __) => const SizedBox(height: 6),
                     itemBuilder: (_, i) => _UpgradeTile(
                       upgrade: visible[i],
-                      canAfford: cookies >= visible[i].currentCost,
+                      canAfford: flowers >= visible[i].currentCost,
                       onBuy: () {
                         final bought = widget.game.upgradeManager.purchase(
                           visible[i].id,
@@ -101,11 +101,11 @@ class _UpgradeTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.brown.shade800,
+          color: Colors.green.shade800,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: canAfford && !isMaxed
-                ? Colors.amber.withOpacity(0.6)
+                ? Colors.lightGreenAccent.withOpacity(0.6)
                 : Colors.transparent,
           ),
         ),
@@ -116,6 +116,7 @@ class _UpgradeTile extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(upgrade.name,
                       style: const TextStyle(
@@ -124,15 +125,14 @@ class _UpgradeTile extends StatelessWidget {
                           fontSize: 13)),
                   Text(
                     upgrade.description,
-                    style: TextStyle(
-                        color: Colors.brown.shade200, fontSize: 11),
+                    style: TextStyle(color: Colors.green.shade200, fontSize: 11),
                   ),
                   Text(
                     isMaxed
                         ? 'MAX (${upgrade.level}/${upgrade.maxLevel})'
-                        : 'Lv ${upgrade.level}  •  🍪 ${_formatCost(upgrade.currentCost)}',
+                        : 'Lv ${upgrade.level}  •  🌸 ${_formatCost(upgrade.currentCost)}',
                     style: TextStyle(
-                        color: isMaxed ? Colors.green : Colors.amber,
+                        color: isMaxed ? Colors.greenAccent : Colors.lightGreenAccent,
                         fontSize: 11),
                   ),
                 ],
@@ -142,15 +142,16 @@ class _UpgradeTile extends StatelessWidget {
               GestureDetector(
                 onTap: canAfford ? onBuy : null,
                 child: Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: canAfford ? Colors.amber : Colors.grey,
+                    color: canAfford ? Colors.lightGreenAccent : Colors.grey,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Text('BUY',
                       style: TextStyle(
-                          fontSize: 11, fontWeight: FontWeight.bold)),
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
                 ),
               ),
           ],

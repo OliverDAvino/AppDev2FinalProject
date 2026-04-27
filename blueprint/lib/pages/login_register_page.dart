@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../auth.dart';
+import '../screens/main_menu_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -12,12 +13,16 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String? errorMessage = '';
   bool isLogin = true;
+  bool _passwordVisible = false;
 
-  final TextEditingController _controllerEmail =
-  TextEditingController();
+  final TextEditingController _controllerEmail = TextEditingController();
+  final TextEditingController _controllerPassword = TextEditingController();
 
-  final TextEditingController _controllerPassword =
-  TextEditingController();
+  void _goToMainMenu() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const MainMenuScreen()),
+    );
+  }
 
   Future<void> signInWithEmailAndPassword() async {
     try {
@@ -25,7 +30,10 @@ class _LoginPageState extends State<LoginPage> {
         email: _controllerEmail.text,
         password: _controllerPassword.text,
       );
-    } on FirebaseAuthException catch (e) {}
+      _goToMainMenu();
+    } on FirebaseAuthException catch (e) {
+      setState(() => errorMessage = e.message);
+    }
   }
 
   Future<void> createUserWithEmailAndPassword() async {
@@ -34,57 +42,16 @@ class _LoginPageState extends State<LoginPage> {
         email: _controllerEmail.text,
         password: _controllerPassword.text,
       );
+      _goToMainMenu();
     } on FirebaseAuthException catch (e) {
-      setState(() {
-        errorMessage = e.message;
-      });
+      setState(() => errorMessage = e.message);
     }
-  }
-
-  Widget title() {
-    return const Text('Firebase Auth');
-  }
-
-  Widget entryField(String title,
-      TextEditingController controller,) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: title,
-      ),
-    );
-  }
-
-  Widget errorMessageWidget() {
-    return Text(errorMessage == '' ? '' : 'Humm ? $errorMessage');
-  }
-
-  Widget submitButton() {
-    return ElevatedButton(
-      onPressed: isLogin
-          ? signInWithEmailAndPassword
-          : createUserWithEmailAndPassword,
-      child: Text(isLogin ? 'Login' : 'Register'),
-    );
-  }
-
-  Widget loginOrRegisterButton() {
-    return TextButton(
-      onPressed: () {
-        setState(() {
-          isLogin = !isLogin;
-        });
-      },
-      child: const Text(isLogin ? 'Register instead' : 'Logi instead'),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: title(),
-      ),
+      appBar: AppBar(title: Text(isLogin ? 'Login' : 'Register')),
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -92,12 +59,43 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            entryField('email', _controllerEmail),
-            entryField('password', _controllerPassword),
-            errorMessageWidget(),
-            submitButton(),
-            loginOrRegisterButton(),
+          children: [
+            TextField(
+              controller: _controllerEmail,
+              decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _controllerPassword,
+              obscureText: !_passwordVisible,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _passwordVisible ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            if (errorMessage != '')
+              Text(
+                errorMessage ?? '',
+                style: const TextStyle(color: Colors.red),
+              ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: isLogin
+                  ? signInWithEmailAndPassword
+                  : createUserWithEmailAndPassword,
+              child: Text(isLogin ? 'Login' : 'Register'),
+            ),
+            TextButton(
+              onPressed: () => setState(() => isLogin = !isLogin),
+              child: Text(isLogin ? 'Register instead' : 'Login instead'),
+            ),
           ],
         ),
       ),

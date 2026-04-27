@@ -61,4 +61,10 @@ class UpgradeManager {
       }
     }
   }
+
+  void reset() {
+    for (final u in _upgrades.values) {
+      u.level = 0;
+    }
+  }
 }
