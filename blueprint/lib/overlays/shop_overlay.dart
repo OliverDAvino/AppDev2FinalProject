@@ -25,9 +25,13 @@ class _ShopOverlayState extends State<ShopOverlay> {
           ),
         ),
         child: ValueListenableBuilder<int>(
+          // Rebuild when rebirth state (Flash Sale discount) changes too.
+          valueListenable: widget.game.rebirthManager.changeTick,
+          builder: (_, __, ___) => ValueListenableBuilder<int>(
           valueListenable: widget.game.cookieNotifier,
           builder: (_, flowers, __) {
-            final upgrades = widget.game.upgradeManager.all;
+            final manager = widget.game.upgradeManager;
+            final upgrades = manager.all;
             final visible = upgrades
                 .where((u) =>
                     flowers >= u.cookiesRequiredToUnlock || u.level > 0)
@@ -51,25 +55,30 @@ class _ShopOverlayState extends State<ShopOverlay> {
                     padding: const EdgeInsets.all(8),
                     itemCount: visible.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 6),
-                    itemBuilder: (_, i) => _UpgradeTile(
-                      upgrade: visible[i],
-                      canAfford: flowers >= visible[i].currentCost,
-                      onBuy: () {
-                        final bought = widget.game.upgradeManager.purchase(
-                          visible[i].id,
-                          widget.game.cookieNotifier,
-                        );
-                        if (bought) {
-                          widget.game.saveToCloud();
-                          setState(() {});
-                        }
-                      },
-                    ),
+                    itemBuilder: (_, i) {
+                      final cost = manager.discountedCost(visible[i]);
+                      return _UpgradeTile(
+                        upgrade: visible[i],
+                        cost: cost,
+                        canAfford: flowers >= cost,
+                        onBuy: () {
+                          final bought = manager.purchase(
+                            visible[i].id,
+                            widget.game.cookieNotifier,
+                          );
+                          if (bought) {
+                            widget.game.saveToCloud();
+                            setState(() {});
+                          }
+                        },
+                      );
+                    },
                   ),
                 ),
               ],
             );
           },
+          ),
         ),
       ),
     );
@@ -78,11 +87,13 @@ class _ShopOverlayState extends State<ShopOverlay> {
 
 class _UpgradeTile extends StatelessWidget {
   final Upgrade upgrade;
+  final int cost;
   final bool canAfford;
   final VoidCallback onBuy;
 
   const _UpgradeTile({
     required this.upgrade,
+    required this.cost,
     required this.canAfford,
     required this.onBuy,
   });
@@ -111,7 +122,7 @@ class _UpgradeTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Text(upgrade.icon, style: const TextStyle(fontSize: 24)),
+            _UpgradeIcon(icon: upgrade.icon),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -130,7 +141,7 @@ class _UpgradeTile extends StatelessWidget {
                   Text(
                     isMaxed
                         ? 'MAX (${upgrade.level}/${upgrade.maxLevel})'
-                        : 'Lv ${upgrade.level}  •  🌸 ${_formatCost(upgrade.currentCost)}',
+                        : 'Lv ${upgrade.level}  •  🌸 ${_formatCost(cost)}',
                     style: TextStyle(
                         color: isMaxed ? Colors.greenAccent : Colors.lightGreenAccent,
                         fontSize: 11),
@@ -158,5 +169,29 @@ class _UpgradeTile extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _UpgradeIcon extends StatelessWidget {
+  final String icon;
+  const _UpgradeIcon({required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    if (icon.startsWith('assets/')) {
+      // Click-power touch icons render larger per design.
+      const touchIcons = {
+        'assets/images/GrassTouch.png',
+        'assets/images/WaterTouch.png',
+        'assets/images/SunTouch.png',
+      };
+      final size = touchIcons.contains(icon) ? 36.4 : 28.0;
+      return SizedBox(
+        width: size,
+        height: size,
+        child: Image.asset(icon, fit: BoxFit.contain),
+      );
+    }
+    return Text(icon, style: const TextStyle(fontSize: 24));
   }
 }

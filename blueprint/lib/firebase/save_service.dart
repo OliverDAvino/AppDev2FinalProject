@@ -21,11 +21,13 @@ class SaveService {
     String uid, {
     required int cookies,
     required Map<String, dynamic> upgrades,
+    Map<String, dynamic>? rebirth,
   }) async {
     try {
       await _doc(uid).set({
         'cookies': cookies,
         'upgrades': upgrades,
+        if (rebirth != null) 'rebirth': rebirth,
         'lastSaved': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
     } catch (e) {

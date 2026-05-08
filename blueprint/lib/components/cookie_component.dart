@@ -9,7 +9,7 @@ import '../cookie_game.dart';
 class CookieComponent extends SpriteComponent
     with TapCallbacks, HasGameRef<CookieGame> {
   CookieComponent({required Vector2 position})
-      : super(size: Vector2(200, 200), anchor: Anchor.center) {
+      : super(size: Vector2(240, 240), anchor: Anchor.center) {
     this.position = position;
   }
 

@@ -37,7 +37,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-#  firebase_icons: ^1.20.0
+  #  firebase_icons: ^1.20.0
   firebase_core: ^3.0.0
   firebase_auth: ^5.0.0
   cloud_firestore: ^5.0.0
@@ -65,7 +65,26 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/MainFlower.png
-    - assets/images/temp.png
+    - assets/images/MainBackground.png
+    - assets/images/SunBackground.png
+    - assets/images/Splashscreen.png
+    - assets/images/WaterTouch.png
+    - assets/images/GrassTouch.png
+    - assets/images/SunTouch.png
+    - assets/images/Tulip.png
+    - assets/images/SakuraStill.png
+    - assets/images/FountainStill.png
+    - assets/images/SunStill.png
+    - assets/images/Sakura.gif
+    - assets/images/Fountain.gif
+    - assets/images/Sun.gif
+    - assets/images/RebirthEnergy.png
+    - assets/images/FlashSale.png
+    - assets/images/DarkSun.gif
+    - assets/images/DarkBackground.png
+    - assets/images/DarkSunStill.png
+    - assets/images/TimeWarp.png
+    - assets/images/FlowerGod.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../auth.dart';
+import '../cookie_game.dart';
 import '../firebase/save_service.dart';
 import 'main_menu_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  // Optional: present when opened from the running game so reset can clear
+  // in-memory state and stop the active instance from re-saving.
+  final CookieGame? game;
+  const SettingsScreen({this.game, super.key});
 
   Future<void> _confirm(
     BuildContext context, {
@@ -95,6 +99,9 @@ class SettingsScreen extends StatelessWidget {
               confirmLabel: 'Reset',
               confirmColor: Colors.orange,
               onConfirm: () async {
+                // Clear the live game first so its onRemove / auto-save
+                // cannot resurrect the save we're about to delete.
+                game?.resetAndSuppressSave();
                 final email = FirebaseAuth.instance.currentUser?.email;
                 if (email != null) {
                   await SaveService().deleteSave(email);

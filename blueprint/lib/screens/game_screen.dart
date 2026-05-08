@@ -4,8 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../cookie_game.dart';
 import '../overlays/hud_overlay.dart';
 import '../overlays/shop_overlay.dart';
+import 'rebirth_screen.dart';
 import 'settings_screen.dart';
 import '../pages/login_register_page.dart';
+import '../widgets/garden_visuals.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -41,7 +43,40 @@ class _GameScreenState extends State<GameScreen> {
       appBar: AppBar(
         backgroundColor: Colors.green.shade900,
         automaticallyImplyLeading: false,
-        title: const Text('Garden Clicker', style: TextStyle(color: Colors.lightGreenAccent)),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Garden Clicker',
+                style: TextStyle(color: Colors.lightGreenAccent)),
+            ValueListenableBuilder<int>(
+              valueListenable: _game.rebirthManager.changeTick,
+              builder: (_, __, ___) => ValueListenableBuilder<int>(
+                valueListenable: _game.cookieNotifier,
+                builder: (_, flowers, __) {
+                  final gain = _game.rebirthManager.rebirthGain(flowers);
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset('assets/images/RebirthEnergy.png',
+                          width: 14, height: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${_game.rebirthManager.rebirthEnergy} rebirth energy'
+                        '${gain > 0 ? '  + $gain' : ''}',
+                        style: const TextStyle(
+                          color: Colors.amberAccent,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.save, color: Colors.white),
@@ -86,6 +121,13 @@ class _GameScreenState extends State<GameScreen> {
             },
           ),
           IconButton(
+            icon: const Icon(Icons.auto_awesome, color: Colors.amberAccent),
+            tooltip: 'Rebirth',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => RebirthScreen(game: _game)),
+            ),
+          ),
+          IconButton(
             icon: Icon(
               Icons.upgrade,
               color: _shopVisible ? Colors.lightGreenAccent : Colors.white,
@@ -97,18 +139,32 @@ class _GameScreenState extends State<GameScreen> {
             icon: const Icon(Icons.settings, color: Colors.white),
             tooltip: 'Settings',
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              MaterialPageRoute(builder: (_) => SettingsScreen(game: _game)),
             ),
           ),
         ],
       ),
-      body: GameWidget(
-        game: _game,
-        overlayBuilderMap: {
-          'hud': (_, game) => HudOverlay(game: game as CookieGame),
-          'shop': (_, game) => ShopOverlay(game: game as CookieGame),
-        },
-        initialActiveOverlays: const ['hud'],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Dynamic background + garden entities; rebuilt on upgrade changes.
+          AnimatedBuilder(
+            animation: Listenable.merge([
+              _game.upgradeManager.changeTick,
+              _game.rebirthManager.changeTick,
+            ]),
+            builder: (_, __) => GardenVisuals(manager: _game.upgradeManager),
+          ),
+          // Flame game (transparent background) sits on top of the garden visuals.
+          GameWidget(
+            game: _game,
+            overlayBuilderMap: {
+              'hud': (_, game) => HudOverlay(game: game as CookieGame),
+              'shop': (_, game) => ShopOverlay(game: game as CookieGame),
+            },
+            initialActiveOverlays: const ['hud'],
+          ),
+        ],
       ),
     );
   }

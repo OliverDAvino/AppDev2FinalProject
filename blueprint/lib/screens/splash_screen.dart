@@ -36,24 +36,10 @@ class _SplashAppState extends State<SplashApp> {
     return Scaffold(
       backgroundColor: Colors.green.shade900,
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset('assets/images/temp.png', width: 100, height: 100),
-            const SizedBox(height: 20),
-            const Text(
-              'Welcome to Garden Clicker!',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.lightGreenAccent,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const CircularProgressIndicator(color: Colors.lightGreenAccent),
-            const SizedBox(height: 10),
-            const Text('Growing your garden...', style: TextStyle(color: Colors.white70)),
-          ],
+        child: Image.asset(
+          'assets/images/Splashscreen.png',
+          width: double.infinity,
+          fit: BoxFit.fitWidth,
         ),
       ),
     );
