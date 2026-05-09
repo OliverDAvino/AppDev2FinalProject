@@ -20,7 +20,7 @@ class UpgradeDefinitions {
       icon: 'assets/images/WaterTouch.png',
       type: UpgradeType.clickPower,
       value: 10,
-      baseCost: 500,
+      baseCost: 250,
       cookiesRequiredToUnlock: 100,
     ),
     Upgrade(
@@ -30,7 +30,7 @@ class UpgradeDefinitions {
       icon: 'assets/images/SunTouch.png',
       type: UpgradeType.clickPower,
       value: 50,
-      baseCost: 5000,
+      baseCost: 3000,
       cookiesRequiredToUnlock: 1000,
     ),
 
@@ -42,7 +42,7 @@ class UpgradeDefinitions {
       icon: 'assets/images/Tulip.png',
       type: UpgradeType.passiveIncome,
       value: 1,
-      baseCost: 100,
+      baseCost: 50,
       costMultiplier: 1.15,
       cookiesRequiredToUnlock: 0,
     ),
