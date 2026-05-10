@@ -18,6 +18,7 @@ class GardenVisuals extends StatelessWidget {
     final tulipLevel = manager.levelOf('Tulip');
     final sakura = manager.levelOf('cookie_factory');
     final fountain = manager.levelOf('cookie_mine');
+    final flowerStand = manager.levelOf('cookie_farm');
 
     final background = sunPower >= 1
         ? (darkSun
@@ -55,7 +56,7 @@ class GardenVisuals extends StatelessWidget {
                       fit: BoxFit.contain),
                 ),
 
-              if (sakura >= 25)
+              if (sakura >= 50)
                 Positioned(
                   top: h * 0.2,
                   right: w * 0.0-4,
@@ -64,6 +65,29 @@ class GardenVisuals extends StatelessWidget {
                   child: Transform.flip(
                     flipX: true,
                     child: Image.asset('assets/images/Sakura.gif',
+                        fit: BoxFit.contain),
+                  ),
+                ),
+
+              if (flowerStand >= 1)
+                Positioned(
+                  left: w * 0.05,
+                  top: h / 2 - 80,
+                  width: 120,
+                  height: 300,
+                  child: Image.asset('assets/images/FlowerStand.png',
+                      fit: BoxFit.contain),
+                ),
+
+              if (flowerStand >= 50)
+                Positioned(
+                  right: w * 0.05,
+                  top: h / 2 - 80,
+                  width: 120,
+                  height: 300,
+                  child: Transform.flip(
+                    flipX: true,
+                    child: Image.asset('assets/images/FlowerStand.png',
                         fit: BoxFit.contain),
                   ),
                 ),

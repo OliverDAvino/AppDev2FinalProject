@@ -12,6 +12,9 @@ class RebirthManager {
 
   int rebirthEnergy = 0;
 
+  // Total rebirth energy ever earned — never decrements when energy is spent.
+  int lifetimeRebirthEnergy = 0;
+
   // Fires whenever rebirth energy or any rebirth upgrade level changes so
   // the AppBar / rebirth screen / shop pricing rebuild.
   final ValueNotifier<int> changeTick = ValueNotifier<int>(0);
@@ -79,6 +82,7 @@ class RebirthManager {
     if (!canRebirth(flowers)) return 0;
     final gain = rebirthGain(flowers);
     rebirthEnergy += gain;
+    lifetimeRebirthEnergy += gain;
     cookieNotifier.value = 0;
     upgradeManager.reset();
     changeTick.value++;
@@ -102,11 +106,13 @@ class RebirthManager {
 
   Map<String, dynamic> toJson() => {
     'energy': rebirthEnergy,
+    'lifetimeEnergy': lifetimeRebirthEnergy,
     'upgrades': {for (var u in _upgrades.values) u.id: u.level},
   };
 
   void fromJson(Map<String, dynamic> json) {
     rebirthEnergy = (json['energy'] as num?)?.toInt() ?? 0;
+    lifetimeRebirthEnergy = (json['lifetimeEnergy'] as num?)?.toInt() ?? 0;
     final upgrades = json['upgrades'];
     if (upgrades is Map) {
       for (final entry in upgrades.entries) {
@@ -119,6 +125,7 @@ class RebirthManager {
 
   void resetAll() {
     rebirthEnergy = 0;
+    lifetimeRebirthEnergy = 0;
     for (final u in _upgrades.values) {
       u.level = 0;
     }

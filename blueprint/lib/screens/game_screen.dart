@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../cookie_game.dart';
+import '../overlays/achievement_toast_overlay.dart';
 import '../overlays/hud_overlay.dart';
 import '../overlays/shop_overlay.dart';
+import 'achievements_screen.dart';
 import 'rebirth_screen.dart';
 import 'settings_screen.dart';
 import '../pages/login_register_page.dart';
@@ -48,7 +50,7 @@ class _GameScreenState extends State<GameScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text('Garden Clicker',
-                style: TextStyle(color: Colors.lightGreenAccent)),
+                style: TextStyle(color: Colors.lightGreenAccent, fontSize: 18)),
             ValueListenableBuilder<int>(
               valueListenable: _game.rebirthManager.changeTick,
               builder: (_, __, ___) => ValueListenableBuilder<int>(
@@ -59,15 +61,18 @@ class _GameScreenState extends State<GameScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset('assets/images/RebirthEnergy.png',
-                          width: 14, height: 14),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${_game.rebirthManager.rebirthEnergy} rebirth energy'
-                        '${gain > 0 ? '  + $gain' : ''}',
-                        style: const TextStyle(
-                          color: Colors.amberAccent,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                          width: 12, height: 12),
+                      const SizedBox(width: 3),
+                      Flexible(
+                        child: Text(
+                          '${_game.rebirthManager.rebirthEnergy} RE'
+                          '${gain > 0 ? ' +$gain' : ''}',
+                          style: const TextStyle(
+                            color: Colors.amberAccent,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -121,6 +126,17 @@ class _GameScreenState extends State<GameScreen> {
             },
           ),
           IconButton(
+            icon: const Icon(Icons.emoji_events, color: Colors.amberAccent),
+            tooltip: 'Achievements',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => AchievementsScreen(
+                  manager: _game.achievementManager,
+                ),
+              ),
+            ),
+          ),
+          IconButton(
             icon: const Icon(Icons.auto_awesome, color: Colors.amberAccent),
             tooltip: 'Rebirth',
             onPressed: () => Navigator.of(context).push(
@@ -164,6 +180,8 @@ class _GameScreenState extends State<GameScreen> {
             },
             initialActiveOverlays: const ['hud'],
           ),
+          // Achievement toasts float above everything else.
+          AchievementToastOverlay(manager: _game.achievementManager),
         ],
       ),
     );

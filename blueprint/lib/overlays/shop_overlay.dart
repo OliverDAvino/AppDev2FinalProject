@@ -62,11 +62,16 @@ class _ShopOverlayState extends State<ShopOverlay> {
                         cost: cost,
                         canAfford: flowers >= cost,
                         onBuy: () {
+                          final id = visible[i].id;
                           final bought = manager.purchase(
-                            visible[i].id,
+                            id,
                             widget.game.cookieNotifier,
                           );
                           if (bought) {
+                            widget.game.achievementManager.checkUpgrade(
+                              id,
+                              manager.levelOf(id),
+                            );
                             widget.game.saveToCloud();
                             setState(() {});
                           }

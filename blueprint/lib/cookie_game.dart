@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'components/cookie_component.dart';
 import 'components/passive_income_system.dart';
+import 'managers/achievement_manager.dart';
 import 'managers/rebirth_manager.dart';
 import 'managers/upgrade_manager.dart';
 import 'firebase/save_service.dart';
@@ -15,6 +16,7 @@ class CookieGame extends FlameGame {
 
   final upgradeManager = UpgradeManager();
   final rebirthManager = RebirthManager();
+  final achievementManager = AchievementManager();
   final cookieNotifier = ValueNotifier<int>(0);
   final _saveService = SaveService();
 
@@ -79,6 +81,10 @@ class CookieGame extends FlameGame {
       if (rebirth is Map) {
         rebirthManager.fromJson(Map<String, dynamic>.from(rebirth));
       }
+      final achievements = data['achievements'];
+      if (achievements is Map) {
+        achievementManager.fromJson(Map<String, dynamic>.from(achievements));
+      }
     }
   }
 
@@ -91,6 +97,7 @@ class CookieGame extends FlameGame {
       cookies: cookieNotifier.value,
       upgrades: upgradeManager.toJson(),
       rebirth: rebirthManager.toJson(),
+      achievements: achievementManager.toJson(),
     );
   }
 
@@ -101,5 +108,6 @@ class CookieGame extends FlameGame {
     cookieNotifier.value = 0;
     upgradeManager.reset();
     rebirthManager.resetAll();
+    achievementManager.reset();
   }
 }

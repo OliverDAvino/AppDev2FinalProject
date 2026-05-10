@@ -48,9 +48,9 @@ class UpgradeDefinitions {
     ),
     Upgrade(
       id: 'cookie_farm',
-      name: 'Flower Bed',
+      name: 'Flower Stand',
       description: '+10 flowers/sec',
-      icon: '🌻',
+      icon: 'assets/images/FlowerStand.png',
       type: UpgradeType.passiveIncome,
       value: 10,
       baseCost: 1100,

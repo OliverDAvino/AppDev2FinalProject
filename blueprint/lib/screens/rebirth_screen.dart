@@ -40,6 +40,9 @@ class _RebirthScreenState extends State<RebirthScreen> {
                 widget.game.cookieNotifier,
                 widget.game.upgradeManager,
               );
+              widget.game.achievementManager.checkRebirth(
+                widget.game.rebirthManager.lifetimeRebirthEnergy,
+              );
               widget.game.saveToCloud();
               Navigator.of(context).pop();
               setState(() {});
@@ -128,6 +131,10 @@ class _RebirthScreenState extends State<RebirthScreen> {
                           onBuy: () {
                             final ok = rm.purchase(u.id);
                             if (ok) {
+                              widget.game.achievementManager.checkRebirthUpgrade(
+                                u.id,
+                                rm.get(u.id).level,
+                              );
                               widget.game.saveToCloud();
                               setState(() {});
                             }
