@@ -33,6 +33,46 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  Future<void> resetPassword() async {
+    final String email = controllerEmail.text.trim();
+
+    if (email.isEmpty) {
+      setState(() {
+        errorMessage = 'Enter your email first, then press Forgot Password.';
+      });
+      return;
+    }
+
+    setState(() {
+      loading = true;
+      errorMessage = null;
+    });
+
+    try {
+      await Auth().sendPasswordResetEmail(email: email);
+
+      if (!mounted) return;
+
+      setState(() {
+        errorMessage = 'Password reset email sent! Check your inbox.';
+      });
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        errorMessage = e.message ?? 'Could not send password reset email.';
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Something went wrong. Try again.';
+      });
+    }
+
+    if (mounted) {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
   Future<void> submit() async {
     final String email = controllerEmail.text.trim();
     final String password = controllerPassword.text.trim();
@@ -226,6 +266,23 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
+                  if (isLogin) ...[
+                    const SizedBox(height: 4),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: loading ? null : resetPassword,
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            color: Colors.lightGreenAccent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+
                   if (!isLogin) ...[
                     const SizedBox(height: 16),
                     TextField(
@@ -258,7 +315,8 @@ class _LoginPageState extends State<LoginPage> {
                       errorMessage!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: errorMessage!.contains('Account created')
+                        color: errorMessage!.contains('Account created') ||
+                            errorMessage!.contains('Password reset email sent')
                             ? Colors.lightGreenAccent
                             : Colors.redAccent,
                         fontWeight: FontWeight.bold,
