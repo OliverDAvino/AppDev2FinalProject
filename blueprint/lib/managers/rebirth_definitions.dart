@@ -15,7 +15,7 @@ class RebirthDefinitions {
     RebirthUpgrade(
       id: 'dark_sun_touch',
       name: 'Dark Sun Touch',
-      description: 'Multiply click gain (4x / 8x / 12x)',
+      description: 'Multiply click gain (6x / 12x / 18x)',
       icon: 'assets/images/DarkSunStill.png',
       baseCost: 100,
       costMultiplier: 15.0,
@@ -24,7 +24,7 @@ class RebirthDefinitions {
     RebirthUpgrade(
       id: 'time_warp',
       name: 'Time Warp',
-      description: 'Multiply passive gain (5x / 10x / 20x)',
+      description: 'Multiply passive gain (5x / 15x / 30x)',
       icon: 'assets/images/TimeWarp.png',
       baseCost: 150,
       costMultiplier: 17.5,

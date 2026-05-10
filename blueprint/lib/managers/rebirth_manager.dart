@@ -35,7 +35,7 @@ class RebirthManager {
   /// Multiplier applied on top of the base click power.
   double get clickMultiplier {
     final lvl = _levelOf('dark_sun_touch');
-    final base = lvl == 0 ? 1.0 : (lvl * 4).toDouble(); // 4 / 8 / 12
+    final base = lvl == 0 ? 1.0 : (lvl * 6).toDouble(); // 4 / 8 / 12
     return base * _flowerGodMultiplier;
   }
 
@@ -51,10 +51,10 @@ class RebirthManager {
         base = 5.0;
         break;
       case 2:
-        base = 10.0;
+        base = 15.0;
         break;
       default:
-        base = 20.0;
+        base = 30.0;
     }
     return base * _flowerGodMultiplier;
   }

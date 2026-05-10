@@ -16,17 +16,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool isLogin = true;
   bool passwordVisible = false;
+  bool confirmPasswordVisible = false;
   bool loading = false;
 
   String? errorMessage;
 
   final TextEditingController controllerEmail = TextEditingController();
   final TextEditingController controllerPassword = TextEditingController();
+  final TextEditingController controllerConfirmPassword = TextEditingController();
 
   @override
   void dispose() {
     controllerEmail.dispose();
     controllerPassword.dispose();
+    controllerConfirmPassword.dispose();
     super.dispose();
   }
 
@@ -70,6 +73,13 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       } else {
+        if (controllerConfirmPassword.text.trim() != password) {
+          setState(() {
+            errorMessage = 'Passwords do not match.';
+            loading = false;
+          });
+          return;
+        }
         await Auth().createUserWithEmailAndPassword(
           email: email,
           password: password,
@@ -216,6 +226,32 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
 
+                  if (!isLogin) ...[
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: controllerConfirmPassword,
+                      obscureText: !confirmPasswordVisible,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: inputDecoration(
+                        label: 'Confirm Password',
+                        icon: Icons.lock_outline,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            confirmPasswordVisible
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Colors.lightGreenAccent,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              confirmPasswordVisible = !confirmPasswordVisible;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+
                   if (errorMessage != null) ...[
                     const SizedBox(height: 14),
                     Text(
@@ -268,6 +304,7 @@ class _LoginPageState extends State<LoginPage> {
                         isLogin = !isLogin;
                         errorMessage = null;
                         controllerPassword.clear();
+                        controllerConfirmPassword.clear();
                       });
                     },
                     child: Text(
