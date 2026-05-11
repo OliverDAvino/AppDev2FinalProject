@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'game_screen.dart';
+import 'leaderboard_screen.dart';
+import 'profile_screen.dart';
 import 'settings_screen.dart';
 import '../auth.dart';
 import '../pages/login_register_page.dart';
@@ -46,6 +48,26 @@ class MainMenuScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => const GameScreen()),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  _MenuButton(
+                    label: 'Leaderboard',
+                    icon: Icons.leaderboard,
+                    color: Colors.amberAccent,
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const LeaderboardScreen()),
+                    ),
+                  ),
+                  if (isLoggedIn) ...[
+                    const SizedBox(height: 16),
+                    _MenuButton(
+                      label: 'Profile',
+                      icon: Icons.person,
+                      color: Colors.lightBlueAccent,
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   if (isLoggedIn)
                     _MenuButton(

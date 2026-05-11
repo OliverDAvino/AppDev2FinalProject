@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'user_service.dart';
 
 class SaveService {
   final _db = FirebaseFirestore.instance;
+  final _userService = UserService();
 
   DocumentReference _doc(String uid) => _db.collection('saves').doc(uid);
+  DocumentReference _leaderboardDoc(String uid) =>
+      _db.collection('leaderboard').doc(uid);
 
   Future<Map<String, dynamic>?> loadSave(String uid) async {
     try {
@@ -32,6 +36,15 @@ class SaveService {
         if (achievements != null) 'achievements': achievements,
         'lastSaved': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+
+      final username = await _userService.getUsername(uid);
+      if (username != null) {
+        await _leaderboardDoc(uid).set({
+          'username': username,
+          'score': cookies,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
     } catch (e) {
       debugPrint('Save error: $e');
     }
@@ -39,7 +52,10 @@ class SaveService {
 
   Future<void> deleteSave(String uid) async {
     try {
-      await _doc(uid).delete();
+      await Future.wait([
+        _doc(uid).delete(),
+        _leaderboardDoc(uid).delete(),
+      ]);
     } catch (e) {
       debugPrint('Delete error: $e');
     }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'two_factor.dart';
 import '../services/email_2fa_service.dart';
-
 import '../auth.dart';
+import '../firebase/user_service.dart';
 import '../screens/main_menu_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,12 +24,15 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController controllerEmail = TextEditingController();
   final TextEditingController controllerPassword = TextEditingController();
   final TextEditingController controllerConfirmPassword = TextEditingController();
+  final TextEditingController controllerUsername = TextEditingController();
+  final _userService = UserService();
 
   @override
   void dispose() {
     controllerEmail.dispose();
     controllerPassword.dispose();
     controllerConfirmPassword.dispose();
+    controllerUsername.dispose();
     super.dispose();
   }
 
@@ -113,6 +116,22 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       } else {
+        final username = controllerUsername.text.trim();
+
+        if (username.isEmpty) {
+          setState(() {
+            errorMessage = 'Please enter a username.';
+            loading = false;
+          });
+          return;
+        }
+        if (username.length < 3) {
+          setState(() {
+            errorMessage = 'Username must be at least 3 characters.';
+            loading = false;
+          });
+          return;
+        }
         if (controllerConfirmPassword.text.trim() != password) {
           setState(() {
             errorMessage = 'Passwords do not match.';
@@ -120,11 +139,22 @@ class _LoginPageState extends State<LoginPage> {
           });
           return;
         }
+
+        final taken = await _userService.isUsernameTaken(username);
+        if (taken) {
+          setState(() {
+            errorMessage = 'Username is already taken.';
+            loading = false;
+          });
+          return;
+        }
+
         await Auth().createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
 
+        await _userService.createUsername(email, username);
         await FirebaseAuth.instance.signOut();
 
         if (!mounted) return;
@@ -134,6 +164,7 @@ class _LoginPageState extends State<LoginPage> {
           loading = false;
           errorMessage = 'Account created! Please log in now.';
           controllerPassword.clear();
+          controllerUsername.clear();
         });
 
         return;
@@ -305,6 +336,15 @@ class _LoginPageState extends State<LoginPage> {
                             });
                           },
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: controllerUsername,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: inputDecoration(
+                        label: 'Username',
+                        icon: Icons.person,
                       ),
                     ),
                   ],

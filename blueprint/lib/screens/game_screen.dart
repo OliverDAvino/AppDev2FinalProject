@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,11 +22,22 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   late final CookieGame _game;
   bool _shopVisible = false;
+  Timer? _autoSaveTimer;
 
   @override
   void initState() {
     super.initState();
     _game = CookieGame();
+    _autoSaveTimer = Timer.periodic(const Duration(seconds: 30), (_) async {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) await _game.saveToCloud();
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoSaveTimer?.cancel();
+    super.dispose();
   }
 
   void _toggleShop() {
